@@ -73,6 +73,7 @@ def bot_worker():
     )
     telegram.send_message(startup_msg, reply_markup=MAIN_MENU_KEYBOARD)
 
+    cf_warned = False
     while True:
         try:
             # 1. Check Telegram commands (basic status/pause/resume/deals)
@@ -80,6 +81,18 @@ def bot_worker():
 
             # 2. Scan if not paused
             if not bot_state.get("paused"):
+                # Test connectivity to Kufar
+                test_ads = scanner.fetch_category_ads(CATEGORIES[0])
+                if test_ads is None or (len(test_ads) == 0 and not cf_warned):
+                    # Check if blocked by Cloudflare
+                    try:
+                        r = scanner.session.get(scanner.search_url, params={"cat": "16020", "lang": "ru"}, timeout=10)
+                        if r.status_code == 403 and not cf_warned:
+                            cf_warned = True
+                            telegram.send_message("⚠️ <b>Внимание:</b> Облачный сервер Render (Германия) заблокирован защитой Cloudflare Куфара (HTTP 403 Forbidden). Запросы с иностранных дата-центров блокируются.")
+                    except Exception:
+                        pass
+
                 deals = scanner.scan_for_deals()
                 for deal in deals:
                     telegram.send_deal_alert(deal)
