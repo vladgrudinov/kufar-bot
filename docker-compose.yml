@@ -1,0 +1,13 @@
+services:
+  kufar_pc_bot:
+    build: .
+    container_name: kufar_pc_bot
+    restart: unless-stopped
+    volumes:
+      - ./browser_session:/app/browser_session
+      - ./screenshots:/app/screenshots
+      - ./kufar_bot.db:/app/kufar_bot.db
+      - ./kufar_bot.log:/app/kufar_bot.log
+      - ./.env:/app/.env
+    environment:
+      - PYTHONUNBUFFERED=1

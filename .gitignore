@@ -1,0 +1,7 @@
+browser_session/
+screenshots/
+*.log
+*.db
+__pycache__/
+*.pyc
+auth_storage_state.json
