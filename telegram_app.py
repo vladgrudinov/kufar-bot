@@ -14,7 +14,10 @@ if str(BASE_DIR) not in sys.path:
 from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 from db import get_ad, update_ad_status, get_connection
 from negotiation_strategy import generate_first_offer_message
-from browser_negotiator import BrowserNegotiator
+try:
+    from browser_negotiator import BrowserNegotiator
+except Exception:
+    BrowserNegotiator = None
 
 logger = logging.getLogger("telegram_app")
 
